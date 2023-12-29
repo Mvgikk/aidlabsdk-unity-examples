@@ -8,8 +8,8 @@ public class Example : MonoBehaviour
     void Start()
     {
         Aidlab.AidlabSDK.init();
-        Aidlab.AidlabSDK.aidlabDelegate.temperature.Subscribe(ReceiveTemperature);
-        Aidlab.AidlabSDK.aidlabDelegate.wearState.Subscribe(ReceiveWearState);
+        Aidlab.AidlabSDK.aidlabDelegate.respiration.Subscribe(() => { Debug.Log(Aidlab.AidlabSDK.aidlabDelegate.respiration.value); });
+
     }
 
     // Update is called once per frame
