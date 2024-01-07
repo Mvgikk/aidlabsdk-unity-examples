@@ -25,13 +25,25 @@ namespace Aidlab
             /// Subscribes a Unity action to be executed when data is received.
             /// </summary>
             /// <param name="action">The Unity action to be subscribed.</param>
-            public void Subscribe(UnityAction action) { onDataReceivedEvents.AddListener(action); }
+            public void Subscribe(UnityAction action) 
+            {                 
+                lock (onDataReceivedEvents)
+                {
+                    onDataReceivedEvents.AddListener(action);
+                } 
+            }
             
             /// <summary>
             /// Unsubscribes a Unity action from receiving data updates.
             /// </summary>
             /// <param name="action">The Unity action to be unsubscribed.</param>
-            public void Unsubscribe(UnityAction action) { onDataReceivedEvents.RemoveListener(action); }
+            public void Unsubscribe(UnityAction action) 
+            {         
+                lock (onDataReceivedEvents)
+                {
+                    onDataReceivedEvents.RemoveListener(action);
+                } 
+            }
             
             /// <summary>
             /// Invokes the registered delegates on the main thread after data has been received.
@@ -42,7 +54,14 @@ namespace Aidlab
             /// </remarks>
             protected void AfterDataReceived()
             {
-                MainThreadWorker.ExecuteOnMainThread.Enqueue(onDataReceivedEvents);
+                MainThreadWorker.Instance.QueueOnMainThread(() =>
+                {
+                    // Ensure accessing UnityEvent is thread-safe.
+                    lock (onDataReceivedEvents)
+                    {
+                        onDataReceivedEvents.Invoke();
+                    }
+                });
             }
         }
 

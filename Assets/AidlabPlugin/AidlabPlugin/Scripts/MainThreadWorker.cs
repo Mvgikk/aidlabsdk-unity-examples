@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using UnityEngine;
 
 /// <summary>
 /// The MainThreadWorker class facilitates execution of Unity events on the main thread.
@@ -9,25 +10,41 @@ using UnityEngine.Events;
 /// It maintains a queue of Unity events that need to be executed on the main thread.
 /// The Update method should be called regularly to process the queued events.
 /// </remarks>
-public class MainThreadWorker
+public class MainThreadWorker : MonoBehaviour
 {
-    /// <summary>
-    /// Queue of Unity events to be executed on the main thread.
-    /// </summary>
-    public readonly static Queue<UnityEvent> ExecuteOnMainThread = new Queue<UnityEvent>();
+    private static MainThreadWorker _instance;
 
-    /// <summary>
-    /// Processes the queued Unity events on the main thread.
-    /// </summary>
-    /// <remarks>
-    /// This method should be called regularly, e.g., in the Update loop of a MonoBehaviour.
-    /// It dequeues and invokes each Unity event in the queue.
-    /// </remarks>
+    public static MainThreadWorker Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new GameObject("MainThreadWorker").AddComponent<MainThreadWorker>();
+                DontDestroyOnLoad(_instance.gameObject);
+            }
+            return _instance;
+        }
+    }
+
+    private readonly Queue<UnityAction> actions = new Queue<UnityAction>();
+
+    public void QueueOnMainThread(UnityAction action)
+    {
+        lock (actions)
+        {
+            actions.Enqueue(action);
+        }
+    }
+
     public void Update()
     {
-        while (ExecuteOnMainThread.Count > 0)
+        lock (actions)
         {
-            ExecuteOnMainThread.Dequeue().Invoke();
+            while (actions.Count > 0)
+            {
+                actions.Dequeue().Invoke();
+            }
         }
     }
 }

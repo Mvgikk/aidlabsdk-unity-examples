@@ -47,7 +47,8 @@ namespace Aidlab
 
         #region Variables
         [SerializeField] private string deviceNameToConnect = "Aidlab";
-        private MainThreadWorker mainThreadWorker = new MainThreadWorker();
+       // private MainThreadWorker mainThreadWorker = new MainThreadWorker();
+        private MainThreadWorker mainThreadWorker;
         public static AidlabDelegate aidlabDelegate = new AidlabDelegate();
         private BLEConnector bleConnector;
         private IAidlabDevice aidlabDevice;        
@@ -65,6 +66,7 @@ namespace Aidlab
         /// </summary>
         private void Awake()
         {
+            mainThreadWorker = MainThreadWorker.Instance;
             if (instance != null)
             {
                 Destroy(gameObject);
@@ -78,6 +80,7 @@ namespace Aidlab
                 receivedData = false;
                 bleConnector = new BLEConnector(this, deviceNameToConnect);
                 GetComponent<MeshRenderer>().enabled = false;
+
             }
         }
         
