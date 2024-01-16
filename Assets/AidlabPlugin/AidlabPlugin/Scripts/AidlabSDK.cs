@@ -6,25 +6,20 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace Aidlab
-{   
-    /// <summary>
-    /// The `AidlabSDK` class is the main interface for interacting with the Aidlab or Aidmed One device.
-    /// </summary>
+{
     public class AidlabSDK : MonoBehaviour
     {
-        /// <summary>
-        /// Initializes the Aidlab SDK and creates an instance of the SDK object on the scene.
-        /// </summary>
-        public static void init()  
-        {  
-            GameObject.Instantiate((UnityEngine.Object) Resources.Load("SDK"), Vector3.zero, Quaternion.identity);
+
+        public static void init()
+        {
+            var gameObject = GameObject.Instantiate((UnityEngine.Object)Resources.Load("SDK"), Vector3.zero,
+                Quaternion.identity);
+            DontDestroyOnLoad(gameObject);
         } 
 
-        /// <summary>
-        /// Enum representing different types of signals supported by the Aidlab device.
-        /// </summary>
         enum Signal
         {
             Ecg = 0,
@@ -55,35 +50,17 @@ namespace Aidlab
         public string hardwareRevisionStr = "";
         private float lastDataReceivedTime = -1.0f;
         private bool receivedData = false;
-        static AidlabSDK instance;
 
         #endregion Variables
         #region UnityMethods
-
-        /// <summary>
-        /// Awake is called when the script instance is being loaded.
-        /// </summary>
         private void Awake()
         {
-            if (instance != null)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                instance = this;
-                DontDestroyOnLoad(gameObject);
-                aidlabDevice = null;
-                lastDataReceivedTime = -1.0f;
-                receivedData = false;
-                bleConnector = new BLEConnector(this, deviceNameToConnect);
-                GetComponent<MeshRenderer>().enabled = false;
-            }
+            aidlabDevice = null;
+            lastDataReceivedTime = -1.0f;
+            receivedData = false;
+            bleConnector = new BLEConnector(this, deviceNameToConnect);
         }
-        
-        /// <summary>
-        /// Update is called once per frame.
-        /// </summary>
+
         private void Update()
         {
             // Unfortunately, the dll from bluetooth does not have an event about 
@@ -98,9 +75,6 @@ namespace Aidlab
             mainThreadWorker.Update();
         }
 
-        /// <summary>
-        /// Called when the script becomes disabled or inactive.
-        /// </summary>
         private void OnDisable()
         {
             bleConnector.Disconnect();
@@ -109,10 +83,6 @@ namespace Aidlab
 
 
         #region Methods
-
-        /// <summary>
-        /// Checks the connection status and disconnects if no data is received for a certain period.
-        /// </summary>
         private void TestConnection()
         {
             if (receivedData)
@@ -126,10 +96,6 @@ namespace Aidlab
             }
         }
 
-        /// <summary>
-        /// Called when Aidlab is connected, sets firmware and hardware revision.
-        /// </summary>
-        /// <param name="aidlabAddress">Address of the connected Aidlab device.</param>
         public void OnAidlabConnected(IntPtr aidlabAddress)
         {
             aidlabDevice = new AidlabDevice(firmwareRevisionStr, hardwareRevisionStr, aidlabAddress);
@@ -141,20 +107,6 @@ namespace Aidlab
             AidlabAPI.SetHardwareRevision(hardwareRevision, hardwareRevision.Length, aidlabAddress);
         }
 
-
-        /// <summary>
-        /// The method allows you to specify which signals to collect from the Aidlab device.
-        /// You can use the <see cref="Signal"/> enum to choose from various signal types.
-        /// For example, to collect ECG and Respiration signals, you can use:
-        /// <code>
-        /// byte[] signals = {(byte)Signal.Ecg, (byte)Signal.Respiration};
-        /// </code>
-        /// </summary>
-        /// <remarks>
-        /// Please note that due to Aidlab's limited computing power, simultaneous data acquisition
-        /// from the microphone and the Motion sensor is not possible. Therefore, if you subscribe
-        /// to both Sound Volume and Motion data types, only one type of data will be returned.
-        /// </remarks>
         public byte[] GetCollectCommand(IntPtr aidlabAddress) 
         {
             byte[] signals = {(byte)Signal.Ecg, (byte)Signal.Temperature, (byte)Signal.HeartRate, (byte)Signal.BodyPosition};
@@ -190,9 +142,6 @@ namespace Aidlab
             }
         }
 
-        /// <summary>
-        /// Called when Aidlab is disconnected.
-        /// </summary>
         public void OnAidlabDisconnected()
         {
             Debug.Log("On aidlab disconnected");
@@ -275,7 +224,8 @@ namespace Aidlab
         }
 
         private void wear_state_c_callback(System.IntPtr context, byte wearState) 
-        { 
+        {
+            // Debug.Log("wear_state_c_callback");
             aidlabDelegate.WearStateDidChange((WearState)wearState); 
         }
 
@@ -297,7 +247,8 @@ namespace Aidlab
         }
 
         private void pressure_wear_state_c_callback(System.IntPtr context, byte pressureWearState)
-        { 
+        {
+            // Debug.Log("pressure_wear_state_c_callback");
             aidlabDelegate.PressureWearStateDidChange((WearState)pressureWearState); 
         }
 
