@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Threading;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Aidlab
@@ -18,19 +21,24 @@ namespace Aidlab
             /// Initializes a new instance of the `DataDelegates` class with a specified name.
             /// </summary>
             /// <param name="name">The name of the data structure.</param>
-            public DataDelegates(string name) { this.name = name; }
+            public DataDelegates(string name) { this.name = name;
+                timer = new Timer(ThrottleCallback, null, Timeout.Infinite, Timeout.Infinite);
+            }
             private UnityEvent onDataReceivedEvents = new UnityEvent();
+            private float throttleInterval = 0.2f; // Adjust the throttle interval as needed (in seconds)
+            private Timer timer;
 
             /// <summary>
             /// Subscribes a Unity action to be executed when data is received.
             /// </summary>
             /// <param name="action">The Unity action to be subscribed.</param>
             public void Subscribe(UnityAction action) 
-            {                 
+            {
                 lock (onDataReceivedEvents)
                 {
                     onDataReceivedEvents.AddListener(action);
-                } 
+                }
+               
             }
             
             /// <summary>
@@ -38,13 +46,13 @@ namespace Aidlab
             /// </summary>
             /// <param name="action">The Unity action to be unsubscribed.</param>
             public void Unsubscribe(UnityAction action) 
-            {         
+            {
                 lock (onDataReceivedEvents)
                 {
                     onDataReceivedEvents.RemoveListener(action);
-                } 
+                }
             }
-            
+
             /// <summary>
             /// Invokes the registered delegates on the main thread after data has been received.
             /// </summary>
@@ -54,14 +62,17 @@ namespace Aidlab
             /// </remarks>
             protected void AfterDataReceived()
             {
-                MainThreadWorker.Instance.QueueOnMainThread(() =>
+                // Start or reset the timer
+                timer.Change((int)(throttleInterval * 1000), Timeout.Infinite);
+            }
+
+            private void ThrottleCallback(object state)
+            {
+                lock (onDataReceivedEvents)
                 {
-                    // Ensure accessing UnityEvent is thread-safe.
-                    lock (onDataReceivedEvents)
-                    {
-                        onDataReceivedEvents.Invoke();
-                    }
-                });
+                    onDataReceivedEvents.Invoke();
+                }
+
             }
         }
 

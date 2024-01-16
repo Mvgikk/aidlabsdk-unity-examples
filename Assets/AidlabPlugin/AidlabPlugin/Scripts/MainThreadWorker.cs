@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
 
+
 /// <summary>
 /// The MainThreadWorker class facilitates execution of Unity events on the main thread.
 /// </summary>
