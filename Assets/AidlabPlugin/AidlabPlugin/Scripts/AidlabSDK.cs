@@ -160,7 +160,7 @@ namespace Aidlab
         /// </remarks>
         public byte[] GetCollectCommand(IntPtr aidlabAddress) 
         {
-            byte[] signals = {(byte)Signal.Respiration};
+            byte[] signals = {(byte)Signal.Orientation};
 
             IntPtr ptr = AidlabAPI.GetCollectCommand(signals, signals.Length, signals, signals.Length, aidlabAddress);
             
