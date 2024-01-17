@@ -22,5 +22,14 @@ Follow the steps mentioned in the [Installation](#Installation) of main branch s
 6. Main functionality is in the `Assets/Scripts/Example.cs`
 
 ---
+## Worth paying attention
 
+Specify respiration signal in signals array\
+`Assets/AidlabPlugin/AidlabPlugin/AidLabSDK.cs`
+
+```c
+        public byte[] GetCollectCommand(IntPtr aidlabAddress) 
+        
+            byte[] signals = {(byte)Signal.Respiration};
+```
 
