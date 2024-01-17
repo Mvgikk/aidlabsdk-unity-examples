@@ -24,11 +24,11 @@ public class Example : MonoBehaviour
     void Update()
     {
         // Move the object using the stored orientation values
-/*        float offsetX = orientationValueX * movementSpeed * horizontalMultiplier * Time.deltaTime;
+        float offsetX = orientationValueX * movementSpeed * horizontalMultiplier * Time.deltaTime;
         float offsetY = orientationValueY * movementSpeed * verticalMultiplier * Time.deltaTime;
 
         // Apply the movement to the object
-        transform.Translate(new Vector3(offsetX, offsetY, 0));*/
+        transform.Translate(new Vector3(offsetX, offsetY, 0));
     }
 
     // Callback method for the orientation event
