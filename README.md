@@ -1,6 +1,7 @@
 # aidlabsdk-unity-examples -> example_respiration
 
 `example_respiration` branch contains an example demonstrating the integration and usage of AidLabSDK in Unity applications specifically focused on respiration functionality.
+It contains simple square object moved along Y-axis on screen based on respiration data.
 
 ## Installation
 
