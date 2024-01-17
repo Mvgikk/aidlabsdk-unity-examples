@@ -30,13 +30,13 @@ Follow the steps mentioned in the [Installation](#Installation) of main branch s
 --- 
 
 ## Worth paying attention
-Panel
+Panel\
 ![ScreenShot2](https://i.gyazo.com/f4cf546e6f4478bedaae5b8c75145d90.png)
 
-Objects on the scene
+Objects on the scene\
 ![ScreenShot1](https://i.gyazo.com/3cba9bc32e3716574fe21a43836bdd46.png)
 
-Chart
+Chart\
 ![ScreenShot](https://i.gyazo.com/f5b1c792a3744c8b7eab87dbb6a8d111.png)
 
 
