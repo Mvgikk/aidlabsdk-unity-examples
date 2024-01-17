@@ -1,6 +1,6 @@
 # aidlabsdk-unity-examples -> example_respiration
 
-`respiration-example` branch contains an example demonstrating the integration and usage of AidLabSDK in Unity applications specifically focused on respiration functionality.
+`example_respiration` branch contains an example demonstrating the integration and usage of AidLabSDK in Unity applications specifically focused on respiration functionality.
 
 ## Installation
 
